@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reserva de Equipamentos | EE Renata Graziano</title>
+  <style>
+    :root{
+      --bg:#f4f7fb; --card:#ffffff; --ink:#182230; --muted:#667085; --line:#e4e7ec;
+      --primary:#1f5d8f; --primary2:#2f7eb7; --soft:#eaf3fb; --ok:#067647; --warn:#b54708; --danger:#b42318;
+      --shadow:0 10px 30px rgba(16,24,40,.08);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+    header{background:linear-gradient(135deg,#153f63,#2f7eb7);color:white;padding:20px 20px 28px}
+    .header-banner-wrap{max-width:1180px;margin:0 auto 18px}
+    .header-banner{display:block;width:100%;border-radius:22px;box-shadow:0 16px 34px rgba(0,0,0,.16);border:1px solid rgba(255,255,255,.18)}
+    .wrap{max-width:1180px;margin:auto}
+    .top{display:flex;gap:18px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}
+    h1{font-size:clamp(24px,4vw,38px);margin:0 0 6px;letter-spacing:-.02em}
+    .subtitle{margin:0;opacity:.9}
+    .pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.28);padding:9px 13px;border-radius:999px;font-weight:700;font-size:13px}
+    main{padding:24px 16px 40px}
+    .grid{display:grid;grid-template-columns:380px 1fr;gap:20px;align-items:start}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+    .card h2{font-size:18px;margin:0}
+    .card-head{padding:20px 20px 8px}
+    .card-body{padding:16px 20px 20px}
+    label{display:block;font-size:13px;font-weight:700;margin:0 0 7px;color:#344054}
+    input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d0d5dd;border-radius:10px;background:white;font:inherit;color:var(--ink);outline:none}
+    input:focus,select:focus,textarea:focus{border-color:#84c5f4;box-shadow:0 0 0 4px #eaf6ff}
+    textarea{min-height:82px;resize:vertical}
+    .field{margin-bottom:14px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    button{border:0;border-radius:10px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer}
+    .primary{width:100%;background:var(--primary);color:white}
+    .primary:hover{background:#174b73}
+    .ghost{background:#f2f4f7;color:#344054}
+    .notice{padding:11px 12px;border-radius:10px;background:#f8fafc;border:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.45;margin-bottom:14px}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+    .stat{background:white;border:1px solid var(--line);border-radius:14px;padding:15px}
+    .stat small{display:block;color:var(--muted);font-weight:700;margin-bottom:6px}
+    .stat strong{font-size:24px}
+    .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+    .filters select,.filters input{width:auto;min-width:170px}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
+    table{width:100%;border-collapse:collapse;min-width:760px;background:white}
+    th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;vertical-align:middle}
+    th{background:#f8fafc;color:#475467;font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+    tr:last-child td{border-bottom:0}
+    .badge{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800}
+    .b-ok{background:#ecfdf3;color:var(--ok)}
+    .b-soft{background:var(--soft);color:var(--primary)}
+    .b-lock{background:#fef3f2;color:var(--danger)}
+    .inventory-box{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0 14px}
+    .inventory-item{border:1px solid var(--line);border-radius:10px;padding:9px;background:#fbfcfe;font-size:11px;color:var(--muted)}
+    .inventory-item b{display:block;color:#344054;font-size:12px;margin-bottom:2px}
+    .empty{padding:34px;text-align:center;color:var(--muted)}
+    .section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+    .section-title p{margin:5px 0 0;color:var(--muted);font-size:13px}
+    .teacher-chip{display:inline-block;background:#f2f4f7;border:1px solid #e4e7ec;border-radius:999px;padding:6px 9px;font-size:11px;margin:3px 3px 0 0;color:#344054}
+    .toast{position:fixed;right:18px;bottom:18px;background:#101828;color:white;padding:12px 16px;border-radius:12px;box-shadow:var(--shadow);display:none;z-index:20;max-width:320px}
+    .hint{font-size:11px;color:var(--muted);margin-top:5px}
+    .week-status{margin-bottom:18px;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:white;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .week-status strong{display:block;margin-bottom:3px}
+    .week-status span{font-size:13px;color:var(--muted)}
+    .status-open{border-color:#abefc6;background:#f6fef9}
+    .status-closed{border-color:#fedf89;background:#fffaeb}
+    .status-tag{font-weight:800;font-size:12px!important;padding:6px 10px;border-radius:999px;background:#f2f4f7;color:#344054!important}
+    .holiday-notice{display:none;margin:-6px 0 18px;padding:12px 14px;border:1px solid #fedf89;background:#fffaeb;border-radius:14px;color:#7a2e0e;font-size:13px;line-height:1.5}
+    .holiday-notice strong{display:block;margin-bottom:4px}
+    .holiday-chip{display:inline-flex;align-items:center;gap:6px;background:#fff4e5;color:#b54708;border-radius:999px;padding:5px 9px;margin:4px 6px 0 0;font-size:11px;font-weight:800}
+    .fixed-card{margin-top:20px}
+    .fixed-toolbar{display:flex;gap:10px;align-items:end;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+    .fixed-toolbar .field{margin:0;min-width:220px}
+    .fixed-note{font-size:12px;line-height:1.5;color:var(--muted);background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:11px 12px;max-width:700px}
+    .fixed-table{min-width:1050px}
+    .fixed-table th:first-child,.fixed-table td:first-child{position:sticky;left:0;z-index:2;background:#f8fafc}
+    .fixed-cell{min-width:145px;line-height:1.25}
+    .fixed-cell strong{display:block;color:#344054;font-size:12px;margin-bottom:3px}
+    .fixed-cell .platform{display:inline-flex;background:#eef4ff;color:#3538cd;border-radius:999px;padding:3px 7px;font-size:10px;font-weight:800;margin-top:2px}
+    .fixed-cell .detail{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+    .fixed-empty{color:#98a2b3;text-align:center}
+    .fixed-badge{display:inline-flex;background:#fff4e5;color:#b54708;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr 1fr}}
+    @media(max-width:900px){.header-banner-wrap{margin-bottom:14px}}
+    @media(max-width:560px){.row{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.filters select,.filters input{width:100%}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-banner-wrap">
+      <img class="header-banner" src="banner-cabecalho.png" alt="Reserva de Equipamentos - E.E. Professora Renata Graziano de Oliveira Prado" />
+    </div>
+    <div class="wrap top">
+      <div>
+        <h1>Reserva de Equipamentos</h1>
+        <p class="subtitle">E.E. Professora Renata Graziano de Oliveira Prado</p>
+      </div>
+      <div class="pill">📚 Reservas por aula • manhã, tarde e noite configuradas</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="weekStatus" class="week-status">
+      <div><strong id="weekStatusTitle">Carregando período de reservas...</strong><span id="weekStatusText"></span></div>
+      <span id="weekStatusTag" class="status-tag">—</span>
+    </div>
+    <div id="holidayNotice" class="holiday-notice"></div>
+    <div class="stats">
+      <div class="stat"><small>Reservas de hoje</small><strong id="todayCount">0</strong></div>
+      <div class="stat"><small>Professores cadastrados</small><strong id="teacherCount">0</strong></div>
+      <div class="stat"><small>Equipamentos cadastrados</small><strong id="equipmentCount" style="font-size:20px">0</strong></div>
+    </div>
+
+    <section class="card fixed-card">
+      <div class="card-head">
+        <div class="section-title">
+          <div><h2>Horários fixos da tarde</h2><p>Grade semanal recorrente de uso dos aparelhos.</p></div>
+          <span class="fixed-badge">🔒 BLOQUEIO FIXO</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="fixed-toolbar">
+          <div class="field">
+            <label for="fixedDayFilter">Dia da semana</label>
+            <select id="fixedDayFilter">
+              <option value="1">Segunda-feira</option>
+              <option value="2">Terça-feira</option>
+              <option value="3">Quarta-feira</option>
+              <option value="4">Quinta-feira</option>
+              <option value="5">Sexta-feira</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="fixed-table">
+            <thead><tr><th>Aula</th><th>Positivo</th><th>Sala de Informática</th><th>Sala de Coordenação</th><th>Chromebook</th><th>Tablet</th><th>Celulares</th></tr></thead>
+            <tbody id="fixedScheduleRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <div class="card-head"><h2>Nova reserva</h2></div>
+        <div class="card-body">
+          <div class="notice">Faça a reserva para uso pedagógico com os estudantes. A lista da semana é encerrada e limpa <b>sexta-feira às 23h</b>; <b>sábado não há novas reservas</b>; e o calendário <b>reabre no domingo</b> para a semana seguinte. As reservas são feitas por <b>aula</b>. Os turnos da <b>manhã, tarde e noite</b> estão configurados. Pela manhã, o sistema considera duas grades: <b>9º anos</b> e <b>Ensino Médio</b>. À tarde, considera três grades: <b>6º/9º anos</b>, <b>7º anos</b> e <b>8º anos</b>. Os <b>horários fixos da tarde</b> permanecem reservados toda semana e não são apagados na limpeza de sexta. A opção <b>“Reservado para Avaliação EXTERNA DA SEDUC”</b> tem prioridade institucional e bloqueia todo o lote do equipamento escolhido nas aulas selecionadas.</div>
+          <div class="inventory-box" id="inventoryBox"></div>
+          <form id="bookingForm">
+            <div class="field">
+              <label for="teacher">Professor(a) / Reserva institucional</label>
+              <select id="teacher" required></select>
+              <div class="hint">A reserva institucional da SEDUC bloqueia o lote completo do equipamento selecionado. Se seu nome não estiver na lista, escolha <b>Outros — digitar nome</b>.</div>
+            </div>
+            <div class="field" id="customTeacherField" style="display:none">
+              <label for="customTeacher">Nome do professor(a)</label>
+              <input id="customTeacher" placeholder="Digite seu nome completo" autocomplete="name" />
+              <div class="hint">Este nome será registrado exatamente como digitado nesta reserva.</div>
+            </div>
+            <div class="field">
+              <label for="classroom">Turma</label>
+              <input id="classroom" placeholder="Ex.: 8º C, 3ª Série A" required />
+            </div>
+            <div class="field">
+              <label for="equipment">Equipamento</label>
+              <select id="equipment" required></select>
+              <div class="hint" id="equipmentHint">Selecione um equipamento para ver o estoque aproximado e o local.</div>
+            </div>
+            <div class="row">
+              <div class="field">
+                <label for="date">Data</label>
+                <input id="date" type="date" required />
+              </div>
+              <div class="field">
+                <label for="quantity">Quantidade</label>
+                <input id="quantity" type="number" min="1" value="1" required />
+                <div class="hint" id="quantityHint"></div>
+              </div>
+            </div>
+            <div class="field">
+              <label for="shift">Turno</label>
+              <select id="shift" required>
+                <option value="">Selecione o turno</option>
+                <option value="Manhã">Manhã</option>
+                <option value="Tarde">Tarde</option>
+                <option value="Noite">Noite</option>
+              </select>
+              <div class="hint">Manhã, tarde e noite configuradas de acordo com as grades da escola.</div>
+            </div>
+            <div class="field" id="morningProfileField" style="display:none">
+              <label for="morningProfile">Grade do turno da manhã</label>
+              <select id="morningProfile">
+                <option value="">Selecione a grade</option>
+                <option value="Manhã - 9º anos">9º anos — intervalo 9h30 às 9h50</option>
+                <option value="Manhã - Ensino Médio">Ensino Médio — intervalo 10h20 às 10h40</option>
+              </select>
+              <div class="hint">As aulas da manhã têm horários diferentes na 4ª aula. Escolha a grade correspondente à turma.</div>
+            </div>
+            <div class="field" id="afternoonProfileField" style="display:none">
+              <label for="afternoonProfile">Grade do turno da tarde</label>
+              <select id="afternoonProfile">
+                <option value="">Selecione a grade</option>
+                <option value="Tarde - 6º e 9º anos">6º e 9º anos — intervalo 15h30 às 15h50</option>
+                <option value="Tarde - 7º anos">7º anos — intervalo 14h40 às 15h00</option>
+                <option value="Tarde - 8º anos">8º anos — intervalo 16h20 às 16h40</option>
+              </select>
+              <div class="hint">Na tarde, o intervalo muda conforme a série. Escolha a grade correspondente à turma.</div>
+            </div>
+            <div class="row">
+              <div class="field">
+                <label for="startLesson">Da aula</label>
+                <select id="startLesson" required disabled><option value="">Selecione o turno primeiro</option></select>
+              </div>
+              <div class="field">
+                <label for="endLesson">Até a aula</label>
+                <select id="endLesson" required disabled><option value="">Selecione a aula inicial</option></select>
+              </div>
+            </div>
+            <div class="hint" id="lessonHint" style="margin:-6px 0 14px">Você pode reservar uma única aula ou um bloco de aulas consecutivas.</div>
+            <div class="field">
+              <label for="purpose">Finalidade / atividade</label>
+              <textarea id="purpose" placeholder="Ex.: Tarefa SP, pesquisa, produção de apresentação..." required></textarea>
+            </div>
+            <button class="primary" type="submit">Reservar equipamento</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <div class="section-title">
+            <div><h2>Reservas</h2><p>Acompanhe as reservas feitas pelos professores.</p></div>
+            <button class="ghost" id="clearBtn" type="button">Limpar demonstração</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="filters">
+            <input type="date" id="filterDate" />
+            <select id="filterTeacher"><option value="">Todos os professores</option></select>
+            <select id="filterEquipment"><option value="">Todos os equipamentos</option></select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Data</th><th>Aula(s)</th><th>Professor / Reserva</th><th>Turma</th><th>Equipamento</th><th>Qtd.</th><th>Status</th></tr></thead>
+              <tbody id="bookingRows"></tbody>
+            </table>
+            <div id="emptyState" class="empty">Nenhuma reserva cadastrada.</div>
+          </div>
+
+          <div style="margin-top:18px">
+            <label>Professores disponíveis no cadastro</label>
+            <div id="teacherChips"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+const teachers = [
+  'Fabio Augusto De Moraes',
+  'Michele Almeida Santana',
+  'Roberto Valdomiro De Brito',
+  'Gilvanir Arcanjo Soares Rodrigues',
+  'Ariel Fischer Gloria',
+  'Brigite Belluco Inoue',
+  'Luzia Martins Araujo Rego',
+  'Marlucia Rosa Da Silva Batista',
+  'Cicero Luis Da Silva Santos',
+  'Paulo Cesar Da Silva Moreno',
+  'Claudio De Jesus',
+  'Adriana Morais Dos Santos',
+  'Reinaldo Dos Santos Evangelista',
+  'Sonia Borges Soares',
+  'Andrea Fernandes',
+  'Celso Eduardo Firmino De Oliveira',
+  'Elisete Dos Santos',
+  'Laura Ribeiro Goncalves De Alvarenga',
+  'Katia Nunes Caldeira',
+  'Anderson Borges',
+  'Edson De Souza E Silva',
+  'Josiane Santos Do Carmo',
+  'Alexandre Marques',
+  'Robson De Jesus',
+  'Marinalva Eva Da Silva Leite',
+  'Priscila Costa De Santana',
+  'Danilo Rodrigues De Jesus',
+  'Sidineia Satil Floel Rocha',
+  'Aline De Souza Campos Santos Andrade',
+  'Nilma Aparecida De Sousa Lares',
+  'Anderson Pereira Lima',
+  'Marcia Cristina Souza Alcantara Taha',
+  'Rafael Rodrigues Dos Reis Santos',
+  'Lucas Oliveira Araujo',
+  'Hugo Dos Santos Lima',
+  'Erico Marques Da Costa',
+  'Vinicius Nonato Dos Santos',
+  'Thiago Alessandro Xavier',
+  'Soraia Vicente De Sousa Dias',
+  'Simone Costa Machado',
+  'Alexandra Karine Silva Da Rocha',
+  'Sirleide Maria Alves Gonzalez',
+  'Debora Silva Maria',
+  'Tatiana Gonçalves Silva Soares',
+  'Alex Da Silva Moreira',
+  'Evelyn Pereira De Souza',
+  'Gabriela Vitoria Lourenço Pinto',
+  'Gabriel Luiz Frontelli Da Silva',
+  'Alex Miller Resende Bezerra'
+].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+
+const SPECIAL_RESERVATION = 'Reservado para Avaliação EXTERNA DA SEDUC';
+const OTHER_TEACHER = '__OUTROS__';
+
+const equipmentCatalog = [
+  {id:'positivo-leitura', name:'Positivo Premium', location:'Sala de Leitura / grupo Positivo', stock:32},
+  {id:'informatica', name:'Computadores Positivo / Multilaser', location:'Sala de Informática', stock:35},
+  {id:'coordenacao', name:'Equipamentos da Coordenação', location:'Sala da Coordenação', stock:25},
+  {id:'chromebooks', name:'Chromebooks', location:'Acervo escolar', stock:40},
+  {id:'tablets', name:'Tablets', location:'Acervo escolar', stock:25},
+  {id:'celulares', name:'Celulares', location:'Uso pedagógico', stock:20}
+];
+
+
+// Feriados nacionais de 2026 que podem afetar dias letivos e reservas.
+// Datas em fins de semana também podem ser cadastradas, mas o sistema já não aceita reservas aos sábados/domingos.
+const holidays2026 = {
+  '2026-09-07':'Independência do Brasil',
+  '2026-10-12':'Nossa Senhora Aparecida',
+  '2026-11-02':'Finados',
+  '2026-11-15':'Proclamação da República',
+  '2026-11-20':'Dia Nacional de Zumbi e da Consciência Negra',
+  '2026-12-25':'Natal'
+};
+
+const lessonSchedules = {
+  'Manhã - 9º anos': [
+    {code:'M9-1', label:'1ª aula', start:'07:00', end:'07:50'},
+    {code:'M9-2', label:'2ª aula', start:'07:50', end:'08:40'},
+    {code:'M9-3', label:'3ª aula', start:'08:40', end:'09:30'},
+    {code:'M9-4', label:'4ª aula', start:'09:50', end:'10:40'},
+    {code:'M9-5', label:'5ª aula', start:'10:40', end:'11:30'},
+    {code:'M9-6', label:'6ª aula', start:'11:30', end:'12:20'}
+  ],
+  'Manhã - Ensino Médio': [
+    {code:'MEM-1', label:'1ª aula', start:'07:00', end:'07:50'},
+    {code:'MEM-2', label:'2ª aula', start:'07:50', end:'08:40'},
+    {code:'MEM-3', label:'3ª aula', start:'08:40', end:'09:30'},
+    {code:'MEM-4', label:'4ª aula', start:'09:30', end:'10:20'},
+    {code:'MEM-5', label:'5ª aula', start:'10:40', end:'11:30'},
+    {code:'MEM-6', label:'6ª aula', start:'11:30', end:'12:20'}
+  ],
+  'Tarde - 6º e 9º anos': [
+    {code:'T69-1', label:'1ª aula', start:'13:00', end:'13:50'},
+    {code:'T69-2', label:'2ª aula', start:'13:50', end:'14:40'},
+    {code:'T69-3', label:'3ª aula', start:'14:40', end:'15:30'},
+    {code:'T69-4', label:'4ª aula', start:'15:50', end:'16:40'},
+    {code:'T69-5', label:'5ª aula', start:'16:40', end:'17:30'},
+    {code:'T69-6', label:'6ª aula', start:'17:30', end:'18:20'}
+  ],
+  'Tarde - 7º anos': [
+    {code:'T7-1', label:'1ª aula', start:'13:00', end:'13:50'},
+    {code:'T7-2', label:'2ª aula', start:'13:50', end:'14:40'},
+    {code:'T7-3', label:'3ª aula', start:'15:00', end:'15:50'},
+    {code:'T7-4', label:'4ª aula', start:'15:50', end:'16:40'},
+    {code:'T7-5', label:'5ª aula', start:'16:40', end:'17:30'},
+    {code:'T7-6', label:'6ª aula', start:'17:30', end:'18:20'}
+  ],
+  'Tarde - 8º anos': [
+    {code:'T8-1', label:'1ª aula', start:'13:00', end:'13:50'},
+    {code:'T8-2', label:'2ª aula', start:'13:50', end:'14:40'},
+    {code:'T8-3', label:'3ª aula', start:'14:40', end:'15:30'},
+    {code:'T8-4', label:'4ª aula', start:'15:30', end:'16:20'},
+    {code:'T8-5', label:'5ª aula', start:'16:40', end:'17:30'},
+    {code:'T8-6', label:'6ª aula', start:'17:30', end:'18:20'}
+  ],
+  'Noite': [
+    {code:'N1', label:'1ª aula', start:'19:00', end:'19:45'},
+    {code:'N2', label:'2ª aula', start:'19:45', end:'20:30'},
+    {code:'N3', label:'3ª aula', start:'20:45', end:'21:30'},
+    {code:'N4', label:'4ª aula', start:'21:30', end:'22:15'},
+    {code:'N5', label:'5ª aula', start:'22:15', end:'23:00'}
+  ]
+};
+
+// Grade fixa semanal do período da tarde, transcrita do cronograma enviado.
+// A orientação do usuário foi aplicada: "Cris" = Alexandra e o texto ao lado é mantido como plataforma/atividade.
+const fixedAfternoonSchedule = [
+  // SEGUNDA
+  {day:1,lesson:1,equipment:'positivo-leitura',teacher:'Roberto',platform:'Matific',detail:'7E'},
+  {day:1,lesson:2,equipment:'positivo-leitura',teacher:'Erico',platform:'SPEAK'},
+  {day:1,lesson:3,equipment:'positivo-leitura',teacher:'Erico',platform:'SPEAK'},
+  {day:1,lesson:4,equipment:'positivo-leitura',teacher:'Sidineia',platform:'Matific',detail:'8D'},
+  {day:1,lesson:5,equipment:'positivo-leitura',teacher:'Erico',platform:'SPEAK'},
+  {day:1,lesson:6,equipment:'positivo-leitura',teacher:'Erico',platform:'SPEAK'},
+  {day:1,lesson:1,equipment:'informatica',teacher:'Soraia',platform:'Alura'},
+  {day:1,lesson:2,equipment:'informatica',teacher:'Soraia',platform:'Alura'},
+  {day:1,lesson:3,equipment:'informatica',teacher:'Alexandra',platform:'Matific'},
+  {day:1,lesson:4,equipment:'informatica',teacher:'Alexandra',platform:'Matific'},
+  {day:1,lesson:5,equipment:'informatica',teacher:'Soraia',platform:'Alura'},
+  {day:1,lesson:6,equipment:'informatica',teacher:'Soraia',platform:'Alura'},
+  {day:1,lesson:1,equipment:'coordenacao',teacher:'Sidineia',platform:'Matific'},
+  {day:1,lesson:2,equipment:'coordenacao',teacher:'Sidineia',platform:'Matific'},
+  {day:1,lesson:3,equipment:'coordenacao',teacher:'Soraia',platform:'Alura'},
+  {day:1,lesson:4,equipment:'coordenacao',teacher:'Soraia',platform:'Alura'},
+  {day:1,lesson:1,equipment:'chromebooks',teacher:'Elisete',platform:'Leia/Redação',detail:'CROM'},
+  {day:1,lesson:2,equipment:'chromebooks',teacher:'Elisete',platform:'Leia/Redação',detail:'CROM'},
+  {day:1,lesson:5,equipment:'chromebooks',teacher:'Elisete',platform:'Leia/Redação',detail:'CROM'},
+  {day:1,lesson:6,equipment:'chromebooks',teacher:'Elisete',platform:'Leia/Redação',detail:'CROM'},
+  {day:1,lesson:1,equipment:'tablets',teacher:'Elisete',platform:'Chromebook'},
+  {day:1,lesson:2,equipment:'tablets',teacher:'Elisete',platform:'Chromebook'},
+  {day:1,lesson:5,equipment:'tablets',teacher:'Tatiana',platform:'Matific'},
+  {day:1,lesson:6,equipment:'tablets',teacher:'Tatiana',platform:'Matific'},
+  {day:1,lesson:1,equipment:'celulares',teacher:'Elisete',platform:'Chromebook'},
+  {day:1,lesson:2,equipment:'celulares',teacher:'Elisete',platform:'Chromebook'},
+  {day:1,lesson:5,equipment:'celulares',teacher:'Tatiana',platform:'Matific'},
+  {day:1,lesson:6,equipment:'celulares',teacher:'Tatiana',platform:'Matific'},
+
+  // TERÇA
+  {day:2,lesson:1,equipment:'positivo-leitura',teacher:'Thiago',platform:'Técnico'},
+  {day:2,lesson:2,equipment:'positivo-leitura',teacher:'Thiago',platform:'Técnico'},
+  {day:2,lesson:3,equipment:'positivo-leitura',teacher:'Soraia',platform:'Alura'},
+  {day:2,lesson:4,equipment:'positivo-leitura',teacher:'Soraia',platform:'Alura'},
+  {day:2,lesson:5,equipment:'positivo-leitura',teacher:'Soraia',platform:'Alura'},
+  {day:2,lesson:6,equipment:'positivo-leitura',teacher:'Soraia',platform:'Alura'},
+  {day:2,lesson:1,equipment:'informatica',teacher:'Alexandra',platform:'Matific'},
+  {day:2,lesson:2,equipment:'informatica',teacher:'Alexandra',platform:'Matific'},
+  {day:2,lesson:3,equipment:'informatica',teacher:'Alexandra',platform:'Matific'},
+  {day:2,lesson:4,equipment:'informatica',teacher:'Alexandra',platform:'Matific'},
+  {day:2,lesson:5,equipment:'informatica',teacher:'Alexandra',platform:'Matific'},
+  {day:2,lesson:6,equipment:'informatica',teacher:'Alexandra',platform:'Matific'},
+  {day:2,lesson:1,equipment:'coordenacao',teacher:'Soraia',platform:'Alura'},
+  {day:2,lesson:2,equipment:'coordenacao',teacher:'Soraia',platform:'Alura'},
+  {day:2,lesson:3,equipment:'coordenacao',teacher:'Roberto',platform:'Matific',detail:'7A'},
+  {day:2,lesson:4,equipment:'coordenacao',teacher:'Roberto',platform:'Matific',detail:'7A'},
+  {day:2,lesson:1,equipment:'chromebooks',teacher:'Marlucia e Elisete',platform:'Redação'},
+  {day:2,lesson:2,equipment:'chromebooks',teacher:'Marlucia e Elisete',platform:'Redação'},
+  {day:2,lesson:3,equipment:'chromebooks',teacher:'Marlucia e Elisete',platform:'Redação'},
+  {day:2,lesson:4,equipment:'chromebooks',teacher:'Marlucia e Elisete',platform:'Redação'},
+  {day:2,lesson:1,equipment:'celulares',teacher:'Erico',platform:'SPEAK'},
+  {day:2,lesson:2,equipment:'celulares',teacher:'Erico',platform:'SPEAK'},
+  {day:2,lesson:5,equipment:'celulares',teacher:'Erico',platform:'SPEAK'},
+  {day:2,lesson:6,equipment:'celulares',teacher:'Erico',platform:'SPEAK'},
+
+  // QUARTA
+  {day:3,lesson:2,equipment:'positivo-leitura',teacher:'Sidineia',platform:'Matific',detail:'8C'},
+  {day:3,lesson:3,equipment:'positivo-leitura',teacher:'Sidineia',platform:'Matific',detail:'8C'},
+  {day:3,lesson:4,equipment:'positivo-leitura',teacher:'Erico',platform:'SPEAK'},
+  {day:3,lesson:5,equipment:'positivo-leitura',teacher:'Nilma',platform:'Educação Financeira',detail:'8B'},
+  {day:3,lesson:6,equipment:'positivo-leitura',teacher:'Erico',platform:'SPEAK'},
+  {day:3,lesson:1,equipment:'informatica',teacher:'Soraia',platform:'Alura'},
+  {day:3,lesson:2,equipment:'informatica',teacher:'Soraia',platform:'Alura'},
+  {day:3,lesson:3,equipment:'informatica',teacher:'Soraia',platform:'Alura'},
+  {day:3,lesson:4,equipment:'informatica',teacher:'Soraia',platform:'Alura'},
+  {day:3,lesson:5,equipment:'informatica',teacher:'Soraia',platform:'Alura'},
+  {day:3,lesson:6,equipment:'informatica',teacher:'Soraia',platform:'Alura'},
+  {day:3,lesson:2,equipment:'coordenacao',teacher:'Nilma',platform:'Educação Financeira',detail:'8B'},
+  {day:3,lesson:3,equipment:'coordenacao',teacher:'Nilma',platform:'Educação Financeira',detail:'8B'},
+  {day:3,lesson:4,equipment:'coordenacao',teacher:'Sidineia',platform:'Matific',detail:'8B'},
+  {day:3,lesson:5,equipment:'coordenacao',teacher:'Sidineia',platform:'Matific',detail:'8B'},
+  {day:3,lesson:6,equipment:'coordenacao',teacher:'Roberto',platform:'Matific',detail:'8C'},
+  {day:3,lesson:5,equipment:'chromebooks',teacher:'Elisete',platform:'Leia/Redação'},
+  {day:3,lesson:6,equipment:'chromebooks',teacher:'Elisete',platform:'Leia/Redação'},
+  {day:3,lesson:1,equipment:'tablets',teacher:'Tatiana',platform:'Matific'},
+  {day:3,lesson:2,equipment:'tablets',teacher:'Tatiana',platform:'Matific'},
+  {day:3,lesson:6,equipment:'tablets',teacher:'Roberto',platform:'Matific',detail:'8C'},
+  {day:3,lesson:1,equipment:'celulares',teacher:'Tatiana',platform:'Matific'},
+  {day:3,lesson:2,equipment:'celulares',teacher:'Tatiana',platform:'Matific'},
+  {day:3,lesson:6,equipment:'celulares',teacher:'Roberto',platform:'Matific',detail:'8C'},
+
+  // QUINTA
+  {day:4,lesson:1,equipment:'positivo-leitura',teacher:'Soraia',platform:'Alura'},
+  {day:4,lesson:2,equipment:'positivo-leitura',teacher:'Soraia',platform:'Alura'},
+  {day:4,lesson:3,equipment:'positivo-leitura',teacher:'Soraia',platform:'Alura'},
+  {day:4,lesson:4,equipment:'positivo-leitura',teacher:'Soraia',platform:'Alura'},
+  {day:4,lesson:5,equipment:'positivo-leitura',teacher:'Soraia',platform:'Alura'},
+  {day:4,lesson:6,equipment:'positivo-leitura',teacher:'Soraia',platform:'Alura'},
+  {day:4,lesson:1,equipment:'informatica',teacher:'Roberto',platform:'Matific',detail:'7E'},
+  {day:4,lesson:2,equipment:'informatica',teacher:'Roberto',platform:'Matific',detail:'7C'},
+  {day:4,lesson:3,equipment:'informatica',teacher:'Roberto',platform:'Matific',detail:'7C'},
+  {day:4,lesson:1,equipment:'coordenacao',teacher:'Marlucia Rosa Da Silva Batista',platform:'Redação/Leia'},
+  {day:4,lesson:2,equipment:'coordenacao',teacher:'Marlucia Rosa Da Silva Batista',platform:'Redação/Leia'},
+  {day:4,lesson:3,equipment:'coordenacao',teacher:'Marlucia Rosa Da Silva Batista',platform:'Redação/Leia'},
+  {day:4,lesson:4,equipment:'coordenacao',teacher:'Elisete',platform:'Leia/Redação'},
+  {day:4,lesson:5,equipment:'coordenacao',teacher:'Marlucia Rosa Da Silva Batista',platform:'Redação/Leia'},
+  {day:4,lesson:6,equipment:'coordenacao',teacher:'Marlucia Rosa Da Silva Batista',platform:'Redação/Leia'},
+  {day:4,lesson:1,equipment:'chromebooks',teacher:'Elisete',platform:'Leia/Redação',detail:'CROM'},
+  {day:4,lesson:2,equipment:'chromebooks',teacher:'Elisete',platform:'Leia/Redação',detail:'CROM'},
+  {day:4,lesson:3,equipment:'chromebooks',teacher:'Elisete',platform:'Leia/Redação',detail:'CROM'},
+  {day:4,lesson:4,equipment:'chromebooks',teacher:'Marlucia Rosa Da Silva Batista',platform:'Redação/Leia'},
+  {day:4,lesson:5,equipment:'chromebooks',teacher:'Elisete',platform:'Leia/Redação'},
+  {day:4,lesson:6,equipment:'chromebooks',teacher:'Elisete',platform:'Leia/Redação'},
+  {day:4,lesson:1,equipment:'tablets',teacher:'Erico',platform:'SPEAK'},
+  {day:4,lesson:3,equipment:'tablets',teacher:'Elisete',platform:'Leia/Redação'},
+  {day:4,lesson:5,equipment:'tablets',teacher:'Erico',platform:'SPEAK'},
+  {day:4,lesson:1,equipment:'celulares',teacher:'Erico',platform:'SPEAK'},
+  {day:4,lesson:3,equipment:'celulares',teacher:'Elisete',platform:'Leia/Redação'},
+  {day:4,lesson:5,equipment:'celulares',teacher:'Erico',platform:'SPEAK'},
+
+  // SEXTA
+  {day:5,lesson:3,equipment:'positivo-leitura',teacher:'Sidineia',platform:'Matific',detail:'8A'},
+  {day:5,lesson:4,equipment:'positivo-leitura',teacher:'Sidineia',platform:'Matific',detail:'8A'},
+  {day:5,lesson:1,equipment:'informatica',teacher:'Nilma',platform:'Matific'},
+  {day:5,lesson:2,equipment:'informatica',teacher:'Nilma',platform:'Matific'},
+  {day:5,lesson:3,equipment:'informatica',teacher:'Nilma',platform:'Matific'},
+  {day:5,lesson:4,equipment:'informatica',teacher:'Nilma',platform:'Matific'},
+  {day:5,lesson:5,equipment:'informatica',teacher:'Nilma',platform:'Matific'},
+  {day:5,lesson:6,equipment:'informatica',teacher:'Nilma',platform:'Matific'},
+  {day:5,lesson:1,equipment:'coordenacao',teacher:'Marlucia Rosa Da Silva Batista',platform:'Redação/Leia'},
+  {day:5,lesson:2,equipment:'coordenacao',teacher:'Marlucia Rosa Da Silva Batista',platform:'Redação/Leia'},
+  {day:5,lesson:3,equipment:'coordenacao',teacher:'Marlucia Rosa Da Silva Batista',platform:'Redação/Leia'},
+  {day:5,lesson:4,equipment:'coordenacao',teacher:'Marlucia Rosa Da Silva Batista',platform:'Redação/Leia'},
+  {day:5,lesson:5,equipment:'coordenacao',teacher:'Alexandra',platform:'Matific'},
+  {day:5,lesson:6,equipment:'coordenacao',teacher:'Alexandra',platform:'Matific'},
+  {day:5,lesson:5,equipment:'chromebooks',teacher:'Marlucia Rosa Da Silva Batista',platform:'Redação/Leia'},
+  {day:5,lesson:6,equipment:'chromebooks',teacher:'Marlucia Rosa Da Silva Batista',platform:'Redação/Leia'},
+  {day:5,lesson:3,equipment:'tablets',teacher:'Tatiana',platform:'Matific'},
+  {day:5,lesson:4,equipment:'tablets',teacher:'Tatiana',platform:'Matific'},
+  {day:5,lesson:5,equipment:'tablets',teacher:'Tatiana',platform:'Matific'},
+  {day:5,lesson:6,equipment:'tablets',teacher:'Tatiana',platform:'Matific'},
+  {day:5,lesson:3,equipment:'celulares',teacher:'Tatiana',platform:'Matific'},
+  {day:5,lesson:4,equipment:'celulares',teacher:'Tatiana',platform:'Matific'},
+  {day:5,lesson:5,equipment:'celulares',teacher:'Tatiana',platform:'Matific'},
+  {day:5,lesson:6,equipment:'celulares',teacher:'Tatiana',platform:'Matific'}
+];
+
+const fixedEquipmentColumns = [
+  {id:'positivo-leitura',label:'Positivo'},
+  {id:'informatica',label:'Sala de Informática'},
+  {id:'coordenacao',label:'Sala de Coordenação'},
+  {id:'chromebooks',label:'Chromebook'},
+  {id:'tablets',label:'Tablet'},
+  {id:'celulares',label:'Celulares'}
+];
+
+const teacher = document.getElementById('teacher');
+const filterTeacher = document.getElementById('filterTeacher');
+const teacherChips = document.getElementById('teacherChips');
+const equipment = document.getElementById('equipment');
+const filterEquipment = document.getElementById('filterEquipment');
+const bookingRows = document.getElementById('bookingRows');
+const emptyState = document.getElementById('emptyState');
+const form = document.getElementById('bookingForm');
+const toast = document.getElementById('toast');
+
+teacher.innerHTML = '<option value="">Selecione o professor ou reserva institucional</option>' + `<option value="${SPECIAL_RESERVATION}">🔒 ${SPECIAL_RESERVATION}</option>` + teachers.map(t=>`<option>${t}</option>`).join('') + `<option value="${OTHER_TEACHER}">➕ Outros — digitar nome</option>`;
+filterTeacher.innerHTML += `<option value="${SPECIAL_RESERVATION}">${SPECIAL_RESERVATION}</option>` + teachers.map(t=>`<option>${t}</option>`).join('');
+teacherChips.innerHTML = teachers.map(t=>`<span class="teacher-chip">${t}</span>`).join('');
+document.getElementById('teacherCount').textContent = teachers.length;
+
+function equipmentLabel(item){ return `${item.name} — ${item.location} (${item.stock==null?'qtd. a confirmar':item.stock})`; }
+equipment.innerHTML = '<option value="">Selecione o equipamento</option>' + equipmentCatalog.map(i=>`<option value="${i.id}">${equipmentLabel(i)}</option>`).join('');
+filterEquipment.innerHTML = '<option value="">Todos os equipamentos</option>' + equipmentCatalog.map(i=>`<option value="${i.id}">${i.name} — ${i.location}</option>`).join('');
+document.getElementById('equipmentCount').textContent = equipmentCatalog.reduce((s,i)=>s+(Number(i.stock)||0),0);
+document.getElementById('inventoryBox').innerHTML = equipmentCatalog.map(i=>`<div class="inventory-item"><b>${i.name}</b>${i.location} • ${i.stock==null?'quantidade a confirmar':'aprox. '+i.stock}</div>`).join('');
+
+function localISO(d=new Date()){
+  const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function todayISO(){ return localISO(new Date()); }
+function atNoon(dateStr){ return new Date(dateStr+'T12:00:00'); }
+function addDays(date, days){ const d=new Date(date); d.setDate(d.getDate()+days); return d; }
+function mondayOf(date){
+  const d=new Date(date.getFullYear(),date.getMonth(),date.getDate(),12,0,0,0);
+  const day=d.getDay();
+  const diff=day===0 ? 1 : 1-day;
+  return addDays(d,diff);
+}
+function fridayOfMonday(monday){ return addDays(monday,4); }
+function formatDate(s){ return atNoon(s).toLocaleDateString('pt-BR'); }
+function formatShortDate(d){ return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}); }
+function isWeekday(dateStr){ const day=atNoon(dateStr).getDay(); return day>=1 && day<=5; }
+function holidayName(dateStr){ return holidays2026[dateStr] || ''; }
+function isHoliday(dateStr){ return Boolean(holidayName(dateStr)); }
+function mins(t){ const [h,m]=t.split(':').map(Number); return h*60+m; }
+function overlap(aStart,aEnd,bStart,bEnd){ return Math.max(mins(aStart),mins(bStart)) < Math.min(mins(aEnd),mins(bEnd)); }
+function scheduleKeyFor(shift, morningProfile='', afternoonProfile=''){
+  if(shift==='Manhã') return morningProfile || '';
+  if(shift==='Tarde') return afternoonProfile || '';
+  return shift;
+}
+function scheduleFor(shift, morningProfile='', afternoonProfile=''){ return lessonSchedules[scheduleKeyFor(shift,morningProfile,afternoonProfile)] || []; }
+function lessonByCode(shift,code,morningProfile='',afternoonProfile=''){ return scheduleFor(shift,morningProfile,afternoonProfile).find(x=>x.code===code); }
+function bookingLessonLabel(b){
+  if(b.lessonLabel) return b.lessonLabel;
+  return `${b.start}–${b.end}`;
+}
+function getEquipment(id){ return equipmentCatalog.find(i=>i.id===id); }
+function overlappingBookings(b){ return bookings.filter(x=>x.date===b.date && x.equipment===b.equipment && overlap(x.start,x.end,b.start,b.end)); }
+function lessonNumberFromCode(code){
+  const m=String(code||'').match(/-(\d+)$/);
+  if(m) return Number(m[1]);
+  const n=String(code||'').match(/N(\d+)$/);
+  return n?Number(n[1]):null;
+}
+function fixedConflictsForBooking(b){
+  if(b.shift!=='Tarde') return [];
+  const day=atNoon(b.date).getDay();
+  const first=lessonNumberFromCode(b.startLesson), last=lessonNumberFromCode(b.endLesson);
+  if(!first || !last) return [];
+  return fixedAfternoonSchedule.filter(x=>x.day===day && x.equipment===b.equipment && x.lesson>=first && x.lesson<=last);
+}
+function availableQuantity(b){
+  const item=getEquipment(b.equipment);
+  if(!item) return 0;
+  if(fixedConflictsForBooking(b).length) return 0;
+  const overlaps=overlappingBookings(b);
+  if(overlaps.some(x=>x.teacher===SPECIAL_RESERVATION)) return 0;
+  if(item.stock==null) return Infinity;
+  return Math.max(0,item.stock-overlaps.reduce((sum,x)=>sum+(Number(x.quantity)||0),0));
+}
+
+function bookingWindow(now=new Date()){
+  const day=now.getDay();
+  const minutes=now.getHours()*60+now.getMinutes();
+  if(day===5 && minutes>=23*60){
+    const monday=mondayOf(now);
+    return {open:false, reason:'sexta23', monday, friday:fridayOfMonday(monday)};
+  }
+  if(day===6){
+    const nextMonday=addDays(mondayOf(now),7);
+    return {open:false, reason:'sabado', monday:nextMonday, friday:fridayOfMonday(nextMonday)};
+  }
+  if(day===0){
+    const nextMonday=mondayOf(now);
+    return {open:true, reason:'domingo', monday:nextMonday, friday:fridayOfMonday(nextMonday)};
+  }
+  const monday=mondayOf(now);
+  return {open:true, reason:'semana', monday, friday:fridayOfMonday(monday)};
+}
+
+const dateInput=document.getElementById('date');
+const weekStatus=document.getElementById('weekStatus');
+const weekStatusTitle=document.getElementById('weekStatusTitle');
+const weekStatusText=document.getElementById('weekStatusText');
+const weekStatusTag=document.getElementById('weekStatusTag');
+const holidayNotice=document.getElementById('holidayNotice');
+let bookings = JSON.parse(localStorage.getItem('reservasEquipamentosDemo') || '[]');
+
+function purgeExpiredBookings(now=new Date()){
+  const window=bookingWindow(now);
+  // Ao atingir sexta-feira às 23h, a lista encerrada é apagada automaticamente.
+  if(window.reason==='sexta23' || window.reason==='sabado'){
+    const cutoff = localISO(window.reason==='sexta23' ? window.friday : addDays(window.monday,-3));
+    const before=bookings.length;
+    bookings=bookings.filter(b=>b.date>cutoff);
+    if(bookings.length!==before) localStorage.setItem('reservasEquipamentosDemo',JSON.stringify(bookings));
+  } else {
+    // Remove semanas antigas caso o navegador só volte a abrir dias depois.
+    const mondayISO=localISO(window.monday);
+    const before=bookings.length;
+    bookings=bookings.filter(b=>b.date>=mondayISO);
+    if(bookings.length!==before) localStorage.setItem('reservasEquipamentosDemo',JSON.stringify(bookings));
+  }
+}
+
+function renderHolidayNotice(w){
+  const start=localISO(w.monday), end=localISO(w.friday);
+  const inWindow=Object.entries(holidays2026).filter(([date])=>date>=start && date<=end);
+  if(!inWindow.length){
+    holidayNotice.style.display='none';
+    holidayNotice.innerHTML='';
+    return;
+  }
+  holidayNotice.style.display='block';
+  holidayNotice.innerHTML='<strong>📅 Atenção: há feriado nesta semana</strong>' + inWindow.map(([date,name])=>`<span class="holiday-chip">${formatDate(date)} • ${name}</span>`).join('') + '<div style="margin-top:6px">Nessas datas, o sistema não permite novas reservas.</div>';
+}
+
+function configureBookingWindow(){
+  const w=bookingWindow(new Date());
+  const min=localISO(w.monday), max=localISO(w.friday);
+  dateInput.min=min; dateInput.max=max;
+  if(!dateInput.value || dateInput.value<min || dateInput.value>max) dateInput.value=min;
+  const submit=form.querySelector('button[type="submit"]');
+  submit.disabled=!w.open;
+  submit.style.opacity=w.open?'1':'.55';
+  submit.style.cursor=w.open?'pointer':'not-allowed';
+  weekStatus.classList.toggle('status-open',w.open);
+  weekStatus.classList.toggle('status-closed',!w.open);
+
+  if(w.reason==='domingo'){
+    weekStatusTitle.textContent='Reservas abertas para a próxima semana';
+    weekStatusText.textContent=`Escolha um dia entre ${formatShortDate(w.monday)} e ${formatShortDate(w.friday)}.`;
+    weekStatusTag.textContent='ABERTO';
+  } else if(w.reason==='sexta23'){
+    weekStatusTitle.textContent='Reservas encerradas';
+    weekStatusText.textContent='A lista desta semana foi limpa. O sistema reabre no domingo para a próxima semana.';
+    weekStatusTag.textContent='FECHADO';
+  } else if(w.reason==='sabado'){
+    weekStatusTitle.textContent='Reservas fechadas aos sábados';
+    weekStatusText.textContent=`O sistema reabre no domingo para a semana de ${formatShortDate(w.monday)} a ${formatShortDate(w.friday)}.`;
+    weekStatusTag.textContent='FECHADO';
+  } else {
+    weekStatusTitle.textContent='Reservas abertas para esta semana';
+    weekStatusText.textContent=`Período disponível: ${formatShortDate(w.monday)} a ${formatShortDate(w.friday)}. Escolha o turno e a(s) aula(s).`;
+    weekStatusTag.textContent='ABERTO';
+  }
+  renderHolidayNotice(w);
+}
+
+purgeExpiredBookings();
+configureBookingWindow();
+document.getElementById('filterDate').value = '';
+
+function showToast(msg){ toast.textContent=msg; toast.style.display='block'; setTimeout(()=>toast.style.display='none',2600); }
+
+form.addEventListener('submit', e=>{
+  e.preventDefault();
+  const w=bookingWindow(new Date());
+  if(!w.open) return showToast('As reservas estão fechadas. O sistema reabre no domingo.');
+  const item=getEquipment(equipment.value);
+  const isSpecial=teacher.value===SPECIAL_RESERVATION;
+  const customTeacher=document.getElementById('customTeacher').value.trim();
+  const teacherName=teacher.value===OTHER_TEACHER ? customTeacher : teacher.value;
+  if(teacher.value===OTHER_TEACHER && !customTeacher) return showToast('Digite o nome do professor(a).');
+  const shift=document.getElementById('shift').value;
+  const morningProfile=document.getElementById('morningProfile').value;
+  const afternoonProfile=document.getElementById('afternoonProfile').value;
+  const startCode=document.getElementById('startLesson').value;
+  const endCode=document.getElementById('endLesson').value;
+  if(shift==='Manhã' && !morningProfile) return showToast('Selecione a grade da manhã: 9º anos ou Ensino Médio.');
+  if(shift==='Tarde' && !afternoonProfile) return showToast('Selecione a grade da tarde: 6º/9º, 7º ou 8º anos.');
+  const schedule=scheduleFor(shift,morningProfile,afternoonProfile);
+  const startIndex=schedule.findIndex(x=>x.code===startCode);
+  const endIndex=schedule.findIndex(x=>x.code===endCode);
+  if(!shift || startIndex<0 || endIndex<0 || endIndex<startIndex) return showToast('Selecione corretamente o turno e a(s) aula(s).');
+  const firstLesson=schedule[startIndex], lastLesson=schedule[endIndex];
+  const lessonLabel = startIndex===endIndex
+    ? `${firstLesson.label} • ${firstLesson.start}–${firstLesson.end}`
+    : `${firstLesson.label} à ${lastLesson.label} • ${firstLesson.start}–${lastLesson.end}`;
+  const b={
+    id:Date.now(), teacher:teacherName, classroom:document.getElementById('classroom').value.trim(),
+    equipment:equipment.value, date:dateInput.value, quantity:isSpecial && item ? (item.stock||1) : +document.getElementById('quantity').value,
+    shift, morningProfile:shift==='Manhã'?morningProfile:'', afternoonProfile:shift==='Tarde'?afternoonProfile:'', startLesson:startCode, endLesson:endCode, lessonLabel,
+    start:firstLesson.start, end:lastLesson.end,
+    purpose:document.getElementById('purpose').value.trim(), institutional:isSpecial
+  };
+  if(!isWeekday(b.date)) return showToast('Escolha uma data de segunda a sexta-feira.');
+  if(isHoliday(b.date)) return showToast(`Não há reservas em ${formatDate(b.date)} — ${holidayName(b.date)}.`);
+  if(b.date<localISO(w.monday) || b.date>localISO(w.friday)) return showToast('Escolha uma data dentro da semana de reservas aberta.');
+  if(b.date<todayISO() && w.reason!=='domingo') return showToast('Não é possível reservar uma data que já passou.');
+  if(!item) return showToast('Selecione um equipamento.');
+  const fixedConflicts=fixedConflictsForBooking(b);
+  const overlaps=overlappingBookings(b);
+  if(isSpecial){
+    if(overlaps.length) return showToast('Já existem reservas extras nesse período. Remova ou altere essas reservas antes de bloquear o lote para a SEDUC.');
+  } else {
+    if(fixedConflicts.length){
+      const f=fixedConflicts[0];
+      return showToast(`Horário fixo: ${f.teacher} • ${f.platform}${f.detail?' • '+f.detail:''}. Escolha outro equipamento ou aula.`);
+    }
+    if(overlaps.some(x=>x.teacher===SPECIAL_RESERVATION)) return showToast('Este equipamento está bloqueado para Avaliação EXTERNA DA SEDUC nesse período.');
+    const available=availableQuantity(b);
+    if(Number.isFinite(available) && b.quantity>available) return showToast(`Quantidade indisponível. Restam ${available} unidades nesse período.`);
+  }
+  bookings.push(b); bookings.sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start));
+  localStorage.setItem('reservasEquipamentosDemo',JSON.stringify(bookings));
+  form.reset(); configureBookingWindow(); document.getElementById('quantity').value=1; updateLessonSelectors(); updateFormMode(); updateEquipmentInfo();
+  render(); showToast('Reserva registrada com sucesso!');
+});
+
+function render(){
+  purgeExpiredBookings();
+  configureBookingWindow();
+  const currentFilterTeacher=filterTeacher.value;
+  const extraTeachers=[...new Set(bookings.map(b=>b.teacher).filter(t=>t && t!==SPECIAL_RESERVATION && !teachers.includes(t)))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  filterTeacher.innerHTML = '<option value="">Todos os professores</option>' + `<option value="${SPECIAL_RESERVATION}">${SPECIAL_RESERVATION}</option>` + teachers.map(t=>`<option>${t}</option>`).join('') + extraTeachers.map(t=>`<option>${t}</option>`).join('');
+  if([...filterTeacher.options].some(o=>o.value===currentFilterTeacher)) filterTeacher.value=currentFilterTeacher;
+  const fd=document.getElementById('filterDate').value, ft=filterTeacher.value, fe=filterEquipment.value;
+  const rows=bookings.filter(b=>(!fd||b.date===fd)&&(!ft||b.teacher===ft)&&(!fe||b.equipment===fe));
+  bookingRows.innerHTML = rows.map(b=>{ const item=getEquipment(b.equipment); const locked=b.teacher===SPECIAL_RESERVATION; return `<tr>
+    <td>${formatDate(b.date)}</td><td><b>${bookingLessonLabel(b)}</b><div class="hint">${b.shift||''}${b.morningProfile?' • '+b.morningProfile.replace('Manhã - ',''):''}${b.afternoonProfile?' • '+b.afternoonProfile.replace('Tarde - ',''):''}</div></td><td>${locked?'🔒 ':''}${b.teacher}</td><td>${b.classroom}</td>
+    <td><span class="badge b-soft">${item?item.name:b.equipment}</span><div class="hint">${item?item.location:''}</div></td><td>${b.quantity}</td><td><span class="badge ${locked?'b-lock':'b-ok'}">${locked?'Bloqueado SEDUC':'Confirmada'}</span></td>
+  </tr>`; }).join('');
+  emptyState.style.display = rows.length ? 'none' : 'block';
+  document.getElementById('todayCount').textContent = bookings.filter(b=>b.date===todayISO()).length;
+}
+
+
+function fixedCellHTML(entry){
+  if(!entry) return '<td class="fixed-empty">—</td>';
+  return `<td class="fixed-cell"><strong>${entry.teacher}</strong><span class="platform">${entry.platform}</span>${entry.detail?`<span class="detail">${entry.detail}</span>`:''}</td>`;
+}
+function renderFixedSchedule(){
+  const day=Number(document.getElementById('fixedDayFilter').value)||1;
+  const rows=[];
+  for(let lesson=1;lesson<=6;lesson++){
+    rows.push(`<tr><td><b>${lesson}ª aula</b></td>${fixedEquipmentColumns.map(col=>fixedCellHTML(fixedAfternoonSchedule.find(x=>x.day===day&&x.lesson===lesson&&x.equipment===col.id))).join('')}</tr>`);
+  }
+  document.getElementById('fixedScheduleRows').innerHTML=rows.join('');
+}
+
+function updateProfileVisibility(){
+  const shift=document.getElementById('shift').value;
+  const morningField=document.getElementById('morningProfileField');
+  const morningProfile=document.getElementById('morningProfile');
+  const afternoonField=document.getElementById('afternoonProfileField');
+  const afternoonProfile=document.getElementById('afternoonProfile');
+  morningField.style.display=shift==='Manhã'?'block':'none';
+  morningProfile.required=shift==='Manhã';
+  afternoonField.style.display=shift==='Tarde'?'block':'none';
+  afternoonProfile.required=shift==='Tarde';
+  if(shift!=='Manhã') morningProfile.value='';
+  if(shift!=='Tarde') afternoonProfile.value='';
+}
+function updateLessonSelectors(){
+  const shift=document.getElementById('shift').value;
+  const morningProfile=document.getElementById('morningProfile').value;
+  const afternoonProfile=document.getElementById('afternoonProfile').value;
+  const startSel=document.getElementById('startLesson');
+  const endSel=document.getElementById('endLesson');
+  const hint=document.getElementById('lessonHint');
+  updateProfileVisibility();
+  if(shift==='Manhã' && !morningProfile){
+    startSel.innerHTML='<option value="">Selecione a grade da manhã primeiro</option>';
+    endSel.innerHTML='<option value="">Selecione a aula inicial</option>';
+    startSel.disabled=true; endSel.disabled=true;
+    hint.textContent='Na manhã, escolha se a turma segue a grade dos 9º anos ou do Ensino Médio.';
+    return;
+  }
+  if(shift==='Tarde' && !afternoonProfile){
+    startSel.innerHTML='<option value="">Selecione a grade da tarde primeiro</option>';
+    endSel.innerHTML='<option value="">Selecione a aula inicial</option>';
+    startSel.disabled=true; endSel.disabled=true;
+    hint.textContent='Na tarde, escolha a grade dos 6º/9º, 7º ou 8º anos.';
+    return;
+  }
+  const schedule=scheduleFor(shift,morningProfile,afternoonProfile);
+  if(!schedule.length){
+    startSel.innerHTML='<option value="">Selecione o turno primeiro</option>';
+    endSel.innerHTML='<option value="">Selecione a aula inicial</option>';
+    startSel.disabled=true; endSel.disabled=true;
+    hint.textContent='Selecione um turno com horários configurados.';
+    return;
+  }
+  startSel.disabled=false;
+  startSel.innerHTML='<option value="">Selecione</option>'+schedule.map(x=>`<option value="${x.code}">${x.label} — ${x.start} às ${x.end}</option>`).join('');
+  endSel.disabled=true;
+  endSel.innerHTML='<option value="">Selecione a aula inicial</option>';
+  hint.textContent='Você pode reservar uma única aula ou um bloco de aulas consecutivas.';
+}
+function updateEndLessons(){
+  const shift=document.getElementById('shift').value;
+  const morningProfile=document.getElementById('morningProfile').value;
+  const afternoonProfile=document.getElementById('afternoonProfile').value;
+  const startSel=document.getElementById('startLesson');
+  const endSel=document.getElementById('endLesson');
+  const schedule=scheduleFor(shift,morningProfile,afternoonProfile);
+  const idx=schedule.findIndex(x=>x.code===startSel.value);
+  if(idx<0){ endSel.disabled=true; endSel.innerHTML='<option value="">Selecione a aula inicial</option>'; return; }
+  endSel.disabled=false;
+  endSel.innerHTML=schedule.slice(idx).map((x,i)=>`<option value="${x.code}">${i===0?'Somente ':''}${x.label} — até ${x.end}</option>`).join('');
+}
+
+function updateEquipmentInfo(){
+  const item=getEquipment(equipment.value);
+  const hint=document.getElementById('equipmentHint');
+  const q=document.getElementById('quantity');
+  const qh=document.getElementById('quantityHint');
+  if(!item){ hint.textContent='Selecione um equipamento para ver o estoque aproximado e o local.'; q.max=''; qh.textContent=''; return; }
+  if(item.stock==null){
+    hint.textContent=`${item.location} • quantidade total ainda não informada.`;
+    q.max='';
+    if(teacher.value===SPECIAL_RESERVATION){ q.value=1; qh.textContent='Reserva institucional: o grupo inteiro ficará bloqueado, mesmo sem quantidade total cadastrada.'; }
+    else qh.textContent='Quantidade total ainda não cadastrada; o sistema valida os horários fixos, mas não o estoque total.';
+    return;
+  }
+  hint.textContent=`${item.location} • estoque aproximado: ${item.stock} unidades.`;
+  q.max=item.stock;
+  if(teacher.value===SPECIAL_RESERVATION){ q.value=item.stock; qh.textContent='Reserva institucional: o lote completo será bloqueado.'; }
+  else { if(+q.value>item.stock) q.value=item.stock; qh.textContent=`Máximo cadastrado: ${item.stock}. O sistema considera as reservas simultâneas.`; }
+}
+function updateFormMode(){
+  const special=teacher.value===SPECIAL_RESERVATION;
+  const other=teacher.value===OTHER_TEACHER;
+  const customTeacherField=document.getElementById('customTeacherField');
+  const customTeacher=document.getElementById('customTeacher');
+  customTeacherField.style.display=other?'block':'none';
+  customTeacher.required=other;
+  if(!other) customTeacher.value='';
+  const classroom=document.getElementById('classroom');
+  const purpose=document.getElementById('purpose');
+  const q=document.getElementById('quantity');
+  if(special){
+    classroom.value='Avaliação Externa SEDUC'; classroom.readOnly=true;
+    purpose.value='Avaliação EXTERNA DA SEDUC';
+    q.readOnly=true;
+  } else {
+    if(classroom.value==='Avaliação Externa SEDUC') classroom.value='';
+    classroom.readOnly=false;
+    if(purpose.value==='Avaliação EXTERNA DA SEDUC') purpose.value='';
+    q.readOnly=false;
+  }
+  updateEquipmentInfo();
+}
+teacher.addEventListener('change',updateFormMode);
+equipment.addEventListener('change',updateEquipmentInfo);
+document.getElementById('shift').addEventListener('change',()=>{updateLessonSelectors(); updateEndLessons();});
+document.getElementById('morningProfile').addEventListener('change',()=>{updateLessonSelectors(); updateEndLessons();});
+document.getElementById('afternoonProfile').addEventListener('change',()=>{updateLessonSelectors(); updateEndLessons();});
+document.getElementById('startLesson').addEventListener('change',updateEndLessons);
+dateInput.addEventListener('change',()=>{
+  if(isHoliday(dateInput.value)){
+    showToast(`Feriado: ${holidayName(dateInput.value)}. Escolha outra data.`);
+  }
+});
+updateLessonSelectors();
+updateFormMode();
+updateEquipmentInfo();
+
+document.querySelectorAll('#filterDate,#filterTeacher,#filterEquipment').forEach(el=>el.addEventListener('change',render));
+document.getElementById('clearBtn').addEventListener('click',()=>{ bookings=[]; localStorage.removeItem('reservasEquipamentosDemo'); render(); showToast('Reservas de demonstração apagadas. Os horários fixos permanecem.'); });
+const fixedDayFilter=document.getElementById('fixedDayFilter');
+const currentDay=new Date().getDay();
+fixedDayFilter.value=(currentDay>=1&&currentDay<=5)?String(currentDay):'1';
+fixedDayFilter.addEventListener('change',renderFixedSchedule);
+renderFixedSchedule();
+render();
+</script>
+</body>
+</html>
